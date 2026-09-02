@@ -2,7 +2,7 @@ const {Pool}=require("pg");
 const bcrypt=require("bcryptjs");
 require("dotenv").config();
 (async()=>{
- const pool=new Pool({connectionString:process.env.DATABASE_URL});
+ const pool=new Pool({connectionString:process.env.DATABASE_URL, ssl: process.env.DATABASE_URL && process.env.DATABASE_URL.includes('render.com') ? { rejectUnauthorized: false } : false});
  const passwords={admin:await bcrypt.hash(process.env.ADMIN_PASSWORD||"Admin123!",12),seller:await bcrypt.hash("Seller123!",12),buyer:await bcrypt.hash("Buyer123!",12)};
  await pool.query("INSERT INTO users(name,email,password_hash,role) VALUES($1,$2,$3,'admin') ON CONFLICT(email) DO NOTHING",["Admin","admin@sitemarket.local",passwords.admin]);
  await pool.query("INSERT INTO users(name,email,password_hash,role) VALUES($1,$2,$3,'seller') ON CONFLICT(email) DO NOTHING",["Demo Seller","seller@sitemarket.local",passwords.seller]);

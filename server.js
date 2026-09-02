@@ -22,7 +22,7 @@ if (isProd && (!process.env.JWT_SECRET || process.env.JWT_SECRET === "dev-secret
 const app = express();
 const PORT = process.env.PORT || 3000;
 const JWT_SECRET = process.env.JWT_SECRET || "dev-secret-change-me";
-const pool = new Pool({ connectionString: process.env.DATABASE_URL, max: 10 });
+const pool = new Pool({ connectionString: process.env.DATABASE_URL, max: 10, ssl: process.env.DATABASE_URL && process.env.DATABASE_URL.includes('render.com') ? { rejectUnauthorized: false } : false });
 
 // Render and most PaaS providers sit behind a reverse proxy; this makes
 // req.ip / rate limiting reflect the real client instead of the proxy.
